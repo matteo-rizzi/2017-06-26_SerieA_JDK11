@@ -208,5 +208,11 @@ public class Match {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "Match [id=" + id + ", season=" + season + ", div=" + div + ", date=" + date + ", homeTeam=" + homeTeam
+				+ ", awayTeam=" + awayTeam + ", fthg=" + fthg + ", ftag=" + ftag + ", ftr=" + ftr + "]";
+	}
+
 }
 

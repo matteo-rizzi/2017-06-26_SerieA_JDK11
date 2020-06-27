@@ -1,9 +1,15 @@
 package it.polito.tdp.seriea;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.seriea.model.Model;
+import it.polito.tdp.seriea.model.Season;
+import it.polito.tdp.seriea.model.SquadraPartite;
+import it.polito.tdp.seriea.model.SquadraStagione;
+import it.polito.tdp.seriea.model.Team;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,10 +29,10 @@ public class FXMLController {
     private URL location;
 
     @FXML
-    private ChoiceBox<?> boxSquadra;
+    private ChoiceBox<Team> boxSquadra;
 
     @FXML
-    private ChoiceBox<?> boxStagione;
+    private ChoiceBox<Season> boxStagione;
 
     @FXML
     private Button btnCalcolaConnessioniSquadra;
@@ -42,16 +48,51 @@ public class FXMLController {
 
     @FXML
     void doAnalizzaSquadre(ActionEvent event) {
+    	this.txtResult.clear();
+    	
+    	this.model.creaGrafo();
+    	this.txtResult.appendText("Grafo creato!\n");
+    	this.txtResult.appendText("# VERTICI: " + this.model.nVertici() + "\n");
+    	this.txtResult.appendText("# ARCHI: " + this.model.nArchi() + "\n\n");
 
     }
 
     @FXML
     void doCalcolaConnessioniSquadra(ActionEvent event) {
+    	this.txtResult.clear();
+    	
+    	if(this.boxSquadra.getValue() == null) {
+    		this.txtResult.appendText("Errore! Devi selezionare una squadra dall'apposito menu a tendina");
+    		return;
+    	}
+    	
+    	Team squadra = this.boxSquadra.getValue();
+    	
+    	List<SquadraPartite> result = this.model.getConnessioniSquadra(squadra);
+    	this.txtResult.appendText("Elenco connessioni della squadra " + squadra + ":\n");
+    	
+    	for(SquadraPartite sp : result) {
+    		this.txtResult.appendText(sp + "\n");
+    	}
 
     }
 
     @FXML
     void doSimulaTifosi(ActionEvent event) {
+    	this.txtResult.clear();
+    	
+
+    	if(this.boxStagione.getValue() == null) {
+    		this.txtResult.appendText("Errore! Devi selezionare una stagione dall'apposito menu a tendina");
+    		return;
+    	}
+    	
+    	Season season = this.boxStagione.getValue();
+    	List<SquadraStagione> result = this.model.simula(season);
+    	
+    	for(SquadraStagione ss : result) {
+    		this.txtResult.appendText(ss + "\n");
+    	}
 
     }
 
@@ -68,5 +109,7 @@ public class FXMLController {
 
 	public void setModel(Model model) {
 		this.model = model;
+		this.boxSquadra.getItems().addAll(this.model.listTeams());
+		this.boxStagione.getItems().addAll(this.model.listSeasons());
 	}
 }
